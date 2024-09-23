@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sharang
+  namespace: sharang-prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sharang
+  template:
+    metadata:
+      labels:
+        app: sharang
+    spec:
+      containers:
+      - name: sharang-prod
+        image: ghcr.io/samirparhi-dev/sharang-app:latest
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: samir-private-ghcr-secret

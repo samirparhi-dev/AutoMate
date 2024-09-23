@@ -1,0 +1,78 @@
+terraform {
+  required_providers {
+    civo = {
+      source = "civo/civo"
+    }
+  }
+}
+provider "civo" {
+  token = var.civo_apitoken
+}
+
+data "civo_firewall" "get_firewall_k8s" {
+    name = "sp7x-firewall"
+    region = var.region
+}
+
+# Create a cluster with k3s
+
+resource "civo_kubernetes_cluster" "k8sCluster" {
+    name = var.cluster_name
+    kubernetes_version = var.k8s_version
+    applications = "Traefik-v2"
+    firewall_id = data.civo_firewall.get_firewall_k8s.id
+    cluster_type = "k3s"
+    region = var.region
+    cni    = var.cni
+    pools {
+        label = "k3s-play"
+        size = var.node_size
+        node_count = var.num_of_nodes
+        # public_ip_node_pool =
+        
+    }
+    
+}
+
+
+# Query small instance size
+data "civo_instances_size" "medium" {
+    filter {
+        key = "name"
+        values = ["g3.medium"]
+        match_by = "re"
+    }
+
+    filter {
+        key = "type"
+        values = ["instance"]
+    }
+
+}
+
+# Query instance disk image
+data "civo_disk_image" "debian" {
+   filter {
+        key = "name"
+        values = ["debian-10"]
+   }
+}
+
+# Create a new instance
+resource "civo_instance" "foo" {
+    hostname = "spx7.build"
+    tags = ["build", "k8s"]
+    notes = "This is a K8s Build Server"
+    size = element(data.civo_instances_size.medium.sizes, 0).name
+    disk_image = element(data.civo_disk_image.debian.diskimages, 0).id
+}
+
+
+
+# module "compute_instance" {
+#   source  = "./modules/civo-compute"
+# }
+
+# module "k8s_cluster" {
+#   source  = "./modules/civo-k8s"
+# }

@@ -1,0 +1,45 @@
+name: Get Repository Info
+
+on:
+  workflow_dispatch:
+    inputs:
+      owner:
+        description: 'GitHub owner of the repository'
+        required: true
+        type: string
+      repo:
+        description: 'GitHub repository name'
+        required: true
+        type: string
+
+jobs:
+  fetch-repo-info:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    
+    - name: Gitleaks
+      uses: gitleaks/gitleaks-action@v2.3.6
+  
+    - name: Set up Julia
+      uses: julia-actions/setup-julia@v1
+      with:
+        version: '1.9'
+
+    - name: Install dependencies
+      run: julia -e 'using Pkg; Pkg.add("HTTP"); Pkg.add("JSON"); Pkg.add("Dates")'
+
+    - name: Run Julia script to get repo info
+      id: repo_info
+      run: julia scripts/get_repo_info.jl ${{ github.event.inputs.owner }} ${{ github.event.inputs.repo }}
+
+    - name: Upload JSON Reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: project-metadata-creator
+        path: '${{ github.workspace }}/kubernetes*.json'
+
+    - name: Display the JSON output
+      run: cat ${{ github.workspace }}/kubernetes*.json

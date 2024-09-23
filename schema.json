@@ -1,0 +1,605 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Generated schema for Root",
+    "type": "object",
+    "properties": {
+      "ClusterName": {
+        "type": "string"
+      },
+      "Findings": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "Namespace": {
+              "type": "string"
+            },
+            "Kind": {
+              "type": "string"
+            },
+            "Name": {
+              "type": "string"
+            },
+            "Metadata": {
+              "type": "object",
+              "properties": {
+                "ImageConfig": {
+                  "type": "object",
+                  "properties": {
+                    "architecture": {
+                      "type": "string"
+                    },
+                    "created": {
+                      "type": "string"
+                    },
+                    "os": {
+                      "type": "string"
+                    },
+                    "rootfs": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "diff_ids": {}
+                      },
+                      "required": [
+                        "type",
+                        "diff_ids"
+                      ]
+                    },
+                    "config": {
+                      "type": "object",
+                      "properties": {},
+                      "required": []
+                    }
+                  },
+                  "required": [
+                    "architecture",
+                    "created",
+                    "os",
+                    "rootfs",
+                    "config"
+                  ]
+                }
+              },
+              "required": [
+                "ImageConfig"
+              ]
+            },
+            "Results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Target": {
+                    "type": "string"
+                  },
+                  "Class": {
+                    "type": "string"
+                  },
+                  "Type": {
+                    "type": "string"
+                  },
+                  "MisconfSummary": {
+                    "type": "object",
+                    "properties": {
+                      "Successes": {
+                        "type": "number"
+                      },
+                      "Failures": {
+                        "type": "number"
+                      },
+                      "Exceptions": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "Successes",
+                      "Failures",
+                      "Exceptions"
+                    ]
+                  },
+                  "Misconfigurations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "Type": {
+                          "type": "string"
+                        },
+                        "ID": {
+                          "type": "string"
+                        },
+                        "AVDID": {
+                          "type": "string"
+                        },
+                        "Title": {
+                          "type": "string"
+                        },
+                        "Description": {
+                          "type": "string"
+                        },
+                        "Message": {
+                          "type": "string"
+                        },
+                        "Namespace": {
+                          "type": "string"
+                        },
+                        "Query": {
+                          "type": "string"
+                        },
+                        "Resolution": {
+                          "type": "string"
+                        },
+                        "Severity": {
+                          "type": "string"
+                        },
+                        "PrimaryURL": {
+                          "type": "string"
+                        },
+                        "References": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "Status": {
+                          "type": "string"
+                        },
+                        "Layer": {
+                          "type": "object",
+                          "properties": {},
+                          "required": []
+                        },
+                        "CauseMetadata": {
+                          "type": "object",
+                          "properties": {
+                            "Provider": {
+                              "type": "string"
+                            },
+                            "Service": {
+                              "type": "string"
+                            },
+                            "StartLine": {
+                              "type": "number"
+                            },
+                            "EndLine": {
+                              "type": "number"
+                            },
+                            "Code": {
+                              "type": "object",
+                              "properties": {
+                                "Lines": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "Number": {
+                                        "type": "number"
+                                      },
+                                      "Content": {
+                                        "type": "string"
+                                      },
+                                      "IsCause": {
+                                        "type": "boolean"
+                                      },
+                                      "Annotation": {
+                                        "type": "string"
+                                      },
+                                      "Truncated": {
+                                        "type": "boolean"
+                                      },
+                                      "Highlighted": {
+                                        "type": "string"
+                                      },
+                                      "FirstCause": {
+                                        "type": "boolean"
+                                      },
+                                      "LastCause": {
+                                        "type": "boolean"
+                                      }
+                                    },
+                                    "required": [
+                                      "Number",
+                                      "Content",
+                                      "IsCause",
+                                      "Annotation",
+                                      "Truncated",
+                                      "FirstCause",
+                                      "LastCause"
+                                    ]
+                                  }
+                                }
+                              },
+                              "required": []
+                            }
+                          },
+                          "required": [
+                            "Provider",
+                            "Service",
+                            "Code"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "Type",
+                        "ID",
+                        "AVDID",
+                        "Title",
+                        "Description",
+                        "Message",
+                        "Namespace",
+                        "Query",
+                        "Resolution",
+                        "Severity",
+                        "PrimaryURL",
+                        "References",
+                        "Status",
+                        "Layer",
+                        "CauseMetadata"
+                      ]
+                    }
+                  },
+                  "Packages": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "Name": {
+                          "type": "string"
+                        },
+                        "Identifier": {
+                          "type": "object",
+                          "properties": {
+                            "PURL": {
+                              "type": "string"
+                            },
+                            "UID": {
+                              "type": "string"
+                            }
+                          },
+                          "required": []
+                        },
+                        "Relationship": {
+                          "type": "string"
+                        },
+                        "Layer": {
+                          "type": "object",
+                          "properties": {
+                            "Digest": {
+                              "type": "string"
+                            },
+                            "DiffID": {
+                              "type": "string"
+                            }
+                          },
+                          "required": []
+                        },
+                        "Version": {
+                          "type": "string"
+                        },
+                        "ID": {
+                          "type": "string"
+                        },
+                        "Arch": {
+                          "type": "string"
+                        },
+                        "SrcName": {
+                          "type": "string"
+                        },
+                        "SrcVersion": {
+                          "type": "string"
+                        },
+                        "Licenses": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "DependsOn": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "Digest": {
+                          "type": "string"
+                        },
+                        "InstalledFiles": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "Maintainer": {
+                          "type": "string"
+                        },
+                        "Release": {
+                          "type": "string"
+                        },
+                        "SrcRelease": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "Name",
+                        "Identifier",
+                        "Layer"
+                      ]
+                    }
+                  },
+                  "Vulnerabilities": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "VulnerabilityID": {
+                          "type": "string"
+                        },
+                        "PkgName": {
+                          "type": "string"
+                        },
+                        "PkgIdentifier": {
+                          "type": "object",
+                          "properties": {
+                            "PURL": {
+                              "type": "string"
+                            },
+                            "UID": {
+                              "type": "string"
+                            }
+                          },
+                          "required": []
+                        },
+                        "InstalledVersion": {
+                          "type": "string"
+                        },
+                        "FixedVersion": {
+                          "type": "string"
+                        },
+                        "Status": {
+                          "type": "string"
+                        },
+                        "Layer": {
+                          "type": "object",
+                          "properties": {
+                            "Digest": {
+                              "type": "string"
+                            },
+                            "DiffID": {
+                              "type": "string"
+                            }
+                          },
+                          "required": []
+                        },
+                        "SeveritySource": {
+                          "type": "string"
+                        },
+                        "PrimaryURL": {
+                          "type": "string"
+                        },
+                        "DataSource": {
+                          "type": "object",
+                          "properties": {
+                            "ID": {
+                              "type": "string"
+                            },
+                            "Name": {
+                              "type": "string"
+                            },
+                            "URL": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "ID",
+                            "Name",
+                            "URL"
+                          ]
+                        },
+                        "Title": {
+                          "type": "string"
+                        },
+                        "Description": {
+                          "type": "string"
+                        },
+                        "Severity": {
+                          "type": "string"
+                        },
+                        "CweIDs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "VendorSeverity": {
+                          "type": "object",
+                          "properties": {
+                            "cbl-mariner": {
+                              "type": "number"
+                            },
+                            "ghsa": {
+                              "type": "number"
+                            },
+                            "redhat": {
+                              "type": "number"
+                            },
+                            "amazon": {
+                              "type": "number"
+                            },
+                            "azure": {
+                              "type": "number"
+                            },
+                            "nvd": {
+                              "type": "number"
+                            },
+                            "ubuntu": {
+                              "type": "number"
+                            },
+                            "alma": {
+                              "type": "number"
+                            },
+                            "oracle-oval": {
+                              "type": "number"
+                            },
+                            "photon": {
+                              "type": "number"
+                            },
+                            "rocky": {
+                              "type": "number"
+                            },
+                            "bitnami": {
+                              "type": "number"
+                            },
+                            "k8s": {
+                              "type": "number"
+                            }
+                          },
+                          "required": []
+                        },
+                        "CVSS": {
+                          "type": "object",
+                          "properties": {
+                            "ghsa": {
+                              "type": "object",
+                              "properties": {
+                                "V3Vector": {
+                                  "type": "string"
+                                },
+                                "V3Score": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "V3Vector",
+                                "V3Score"
+                              ]
+                            },
+                            "nvd": {
+                              "type": "object",
+                              "properties": {
+                                "V3Vector": {
+                                  "type": "string"
+                                },
+                                "V3Score": {
+                                  "type": "number"
+                                },
+                                "V2Vector": {
+                                  "type": "string"
+                                },
+                                "V2Score": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "V3Vector",
+                                "V3Score"
+                              ]
+                            },
+                            "redhat": {
+                              "type": "object",
+                              "properties": {
+                                "V3Vector": {
+                                  "type": "string"
+                                },
+                                "V3Score": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "V3Vector",
+                                "V3Score"
+                              ]
+                            },
+                            "bitnami": {
+                              "type": "object",
+                              "properties": {
+                                "V3Vector": {
+                                  "type": "string"
+                                },
+                                "V3Score": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "V3Vector",
+                                "V3Score"
+                              ]
+                            },
+                            "k8s": {
+                              "type": "object",
+                              "properties": {
+                                "V3Vector": {
+                                  "type": "string"
+                                },
+                                "V3Score": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "V3Vector",
+                                "V3Score"
+                              ]
+                            }
+                          },
+                          "required": []
+                        },
+                        "References": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "PublishedDate": {
+                          "type": "string"
+                        },
+                        "LastModifiedDate": {
+                          "type": "string"
+                        },
+                        "PkgID": {
+                          "type": "string"
+                        },
+                        "VendorIDs": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "VulnerabilityID",
+                        "PkgName",
+                        "PkgIdentifier",
+                        "InstalledVersion",
+                        "Status",
+                        "Layer",
+                        "DataSource",
+                        "Title",
+                        "Severity"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "Target",
+                  "Class",
+                  "Type"
+                ]
+              }
+            }
+          },
+          "required": [
+            "Kind",
+            "Name",
+            "Metadata",
+            "Results"
+          ]
+        }
+      }
+    },
+    "required": [
+      "ClusterName",
+      "Findings"
+    ]
+  }
