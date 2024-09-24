@@ -1,0 +1,58 @@
+name: SonarQube Analysis and report upload
+
+on:
+    workflow_dispatch:
+      inputs:
+        owner:
+          description: 'GitHub owner of the repository'
+          required: true
+          type: string
+        repo:
+          description: 'GitHub repository name'
+          required: true
+          type: string
+
+jobs:
+  sonarqube:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Start a SonarQube Docker container
+      - name: Start SonarQube server
+        run: |
+          docker run -d --name sonarqube -p 9000:9000 sonarqube:community
+          # Wait for SonarQube to start
+          until $(curl -s -o /dev/null -w "%{http_code}" http://localhost:9000) == "200"; do
+            echo "Waiting for SonarQube to start..."
+            sleep 10
+          done
+
+      # Run SonarScanner to analyze the code
+      - name: Run SonarScanner
+        run: |
+          docker run --network=host \
+            -e SONAR_HOST_URL="http://localhost:9000" \
+            -e SONAR_LOGIN="admin" \
+            -e SONAR_PASSWORD="admin" \
+            -v $(pwd):/usr/src \
+            sonarsource/sonar-scanner-cli:latest \
+            -Dsonar.projectKey=${{ github.event.inputs.repo }} \
+            -Dsonar.sources=./src \
+            -Dsonar.host.url=http://localhost:9000 \
+            -Dsonar.login=admin \
+            -Dsonar.password=admin
+
+      # Download the SonarQube analysis report in JSON format
+      - name: Download SonarQube report in JSON
+        run: |
+          analysis_id=$(curl -s -u admin:admin "http://localhost:9000/api/project_analyses/search?project=my_project_key" | jq -r '.analyses[0].key')
+          curl -u admin:admin "http://localhost:9000/api/issues/search?projectKeys=my_project_key&resolved=false&ps=500" -o ${{ github.event.inputs.repo }}-sonarqube-report.json
+
+      # Upload the JSON report as an artifact
+      - name: Upload SonarQube JSON report
+        uses: actions/upload-artifact@v4
+        with:
+          name: sonarqube-${{ github.event.inputs.repo }}-report-json
+          path: sonarqube-${{ github.event.inputs.repo }}-report.json
