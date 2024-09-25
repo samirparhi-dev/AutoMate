@@ -16,9 +16,11 @@ jobs:
   sonarqube:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
 
+      - name: Checkout the Code
+        run: |
+            git clone https://github.com/${{ github.event.inputs.owner }}/${{ github.event.inputs.repo }}.git
+        
       # Start a SonarQube Docker container
       - name: Start SonarQube server
         run: |

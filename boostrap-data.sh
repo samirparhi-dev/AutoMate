@@ -106,7 +106,7 @@ echo "9e883d210df8c6028aff475475a457d380353f9d01877d51cc01a17b2a91161d  actions-
 
 tar xzf ./actions-runner-linux-x64-2.317.0.tar.gz
 
-./config.sh --url https://github.com/samirparhi-dev/JuiceApp --token AOJWVYHTKFV4UNMCUKACIR3GTDB42
+./config.sh --url https://github.com/samirparhi-dev/JuiceApp --token <<token here>>
 
 ./actions-runner/run.sh
 
@@ -114,9 +114,3 @@ rm -rf ~/*.tar.gz
 
 #Sourcing the final Bashrc
 source ~/.bashrc
-
-
-
-
-
-
