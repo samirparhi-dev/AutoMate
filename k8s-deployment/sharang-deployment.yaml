@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: sharang-prod
-        image: ghcr.io/samirparhi-dev/sharang-app:latest
+        image: ghcr.io/samirparhi-dev/sharang-app:v2
         ports:
         - containerPort: 8080
       imagePullSecrets:
