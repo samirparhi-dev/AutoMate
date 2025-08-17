@@ -1,0 +1,124 @@
+# =============================================================================
+# Stage 1: Base System Setup (This will be cached)
+# =============================================================================
+
+ARG BASE_IMAGE="ubuntu:22.04"
+# ARG BASE_IMAGE="alpine:3.19"
+FROM $BASE_IMAGE AS base-system
+ARG DISTRO=ubuntu
+ARG ISUPOD_USERNAME=developer
+ARG ISUPOD_PASSWORD=password123
+ARG ISUPOD_PROFILE=podxs-default-profile
+ENV DEBIAN_FRONTEND=noninteractive
+# Set default user/pass
+ENV HOME /home/${ISUPOD_USERNAME}
+
+# Environment config for base system
+ENV SKIP_CLEAN=true \
+    INST_DIR=/tmp/install \
+    BASE_SCRIPTS="/pre_req.sh"
+
+# Create the user and set password
+RUN useradd -m -s /bin/bash ${ISUPOD_USERNAME} && \
+    echo "${ISUPOD_USERNAME}:${ISUPOD_PASSWORD}" | chpasswd && \
+    usermod -aG sudo ${ISUPOD_USERNAME}
+
+# Create necessary directories early
+RUN mkdir -p /home/${ISUPOD_USERNAME}/Desktop && \
+    chown -R ${ISUPOD_USERNAME}:${ISUPOD_USERNAME} /home/${ISUPOD_USERNAME} && \
+    chown 1000:0 $HOME
+
+# Copy and run ONLY the prerequisite scripts (this layer will be cached)
+COPY ./scripts/ $INST_DIR/
+RUN set -e && \
+    for SCRIPT in $BASE_SCRIPTS; do \
+    echo "Running base script: ${INST_DIR}${SCRIPT}"; \
+    if [ -f "${INST_DIR}${SCRIPT}" ]; then \
+    bash "${INST_DIR}${SCRIPT}" || { echo "Failed to run ${SCRIPT}"; exit 1; }; \
+    else \
+    echo "Warning: Script ${INST_DIR}${SCRIPT} not found"; \
+    fi; \
+    done
+
+# =============================================================================
+# Stage 2: System Configuration (Less likely to change)
+# =============================================================================
+
+FROM base-system AS system-config
+
+### Install xfce UI
+COPY ./xfce $INST_DIR/xfce/
+RUN bash $INST_DIR/xfce/install_xfce_ui.sh && rm -rf $INST_DIR/xfce/
+COPY ./xfce/.config/ $HOME/.config/
+COPY podXs.png /usr/share/backgrounds/podXs.png
+COPY podXs.png /usr/share/backgrounds/bg_default.png
+
+# XRDP Configuration
+RUN systemctl enable xrdp && \
+    adduser xrdp ssl-cert
+
+# Configure XRDP
+RUN echo "max_bpp=24" >> /etc/xrdp/xrdp.ini && \
+    echo "xserverbpp=24" >> /etc/xrdp/xrdp.ini && \
+    echo "allowed_users=anybody" >> /etc/X11/Xwrapper.config && \
+    echo "needs_root_rights=yes" >> /etc/X11/Xwrapper.config
+
+# Set XFCE as default session
+RUN echo "startxfce4" > /home/${ISUPOD_USERNAME}/.xsession && \
+    chown ${ISUPOD_USERNAME}:${ISUPOD_USERNAME} /home/${ISUPOD_USERNAME}/.xsession && \
+    chmod +x /home/${ISUPOD_USERNAME}/.xsession
+
+# Create .xsessionrc for proper environment
+RUN echo "export XDG_SESSION_DESKTOP=xfce" > /home/${ISUPOD_USERNAME}/.xsessionrc && \
+    echo "export XDG_DATA_DIRS=/usr/share/xfce4:/usr/local/share:/usr/share:/var/lib/snapd/desktop" >> /home/${ISUPOD_USERNAME}/.xsessionrc && \
+    echo "export XDG_CONFIG_DIRS=/etc/xdg/xdg-xfce:/etc/xdg" >> /home/${ISUPOD_USERNAME}/.xsessionrc && \
+    chown ${ISUPOD_USERNAME}:${ISUPOD_USERNAME} /home/${ISUPOD_USERNAME}/.xsessionrc
+
+# =============================================================================
+# Stage 3: Application Installation (More likely to change)
+# =============================================================================
+FROM system-config AS app-install
+
+# Environment config for applications - Customize this list as needed
+ENV INST_SCRIPTS="/install_zed.sh \
+    /install_brave.sh \
+    /install_ansible.sh \
+    /install_tofu.sh "
+
+# Copy application installation scripts
+COPY ./scripts/ $INST_DIR/
+
+# Run application installation scripts using for loop
+RUN set -e && \
+    for SCRIPT in $INST_SCRIPTS; do \
+    echo "Running script: ${INST_DIR}${SCRIPT}"; \
+    if [ -f "${INST_DIR}${SCRIPT}" ]; then \
+    bash "${INST_DIR}${SCRIPT}" || { echo "Failed to run ${SCRIPT}"; exit 1; }; \
+    else \
+    echo "Warning: Script ${INST_DIR}${SCRIPT} not found"; \
+    fi; \
+    done
+
+# =============================================================================
+# Stage 4: Final Configuration
+# =============================================================================
+FROM app-install AS final
+
+# Clean up installation directory
+RUN rm -Rf ${INST_DIR}
+
+# Final permission fix
+RUN chown -R 1000:0 /home/${ISUPOD_USERNAME}
+
+# Copy entrypoint script and fix permissions
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Expose ports
+EXPOSE 3389 8080
+
+# Set working directory and user
+WORKDIR $HOME
+USER 1000
+
+CMD ["/entrypoint.sh"]
